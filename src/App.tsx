@@ -37,19 +37,15 @@ function App() {
   };
 
   const handleNoteOn = (note: number) => {
-    navigator.requestMIDIAccess().then((midiAccess) => {
-      if (!selectedOutput) return;
-      const output = midiAccess.outputs.get(selectedOutput);
-      output?.send([144, note, 60]);
-    });
+    if (!selectedOutput || !midi.current) return;
+    const output = midi.current.outputs.get(selectedOutput);
+    output?.send([144, note, 60]);
   };
 
   const handleNoteOff = (note: number) => {
-    navigator.requestMIDIAccess().then((midiAccess) => {
-      if (!selectedOutput) return;
-      const output = midiAccess.outputs.get(selectedOutput);
-      output?.send([128, note, 0]);
-    });
+    if (!selectedOutput || !midi.current) return;
+    const output = midi.current.outputs.get(selectedOutput);
+    output?.send([128, note, 0]);
   };
 
   useEffect(() => {
@@ -66,25 +62,23 @@ function App() {
   }, []);
 
   useEffect(() => {
-    navigator.requestMIDIAccess().then((midiAccess) => {
-      Array.from(midiAccess.inputs).forEach((input) => {
-        input[1].onmidimessage = (msg: any) => {
-          if (msg.currentTarget?.id !== selectedInput) return;
-          if (!selectedOutput) return;
-          const output = midiAccess.outputs.get(selectedOutput);
-          output?.send(msg.data);
-          const [status, note, _] = msg.data;
-          const noteOn = status === 144;
-          const noteOff = status === 128;
-          // const afterTouch = status === 208
-          if (noteOn)
-            setActiveNotes((prev) => (prev ? [...prev, note] : [note]));
-          if (noteOff)
-            setActiveNotes((prev) =>
-              prev?.filter((prevNote) => prevNote !== note)
-            );
-        };
-      });
+    if (!midi.current) return;
+    Array.from(midi.current.inputs).forEach((input) => {
+      input[1].onmidimessage = (msg: any) => {
+        if (msg.currentTarget?.id !== selectedInput) return;
+        if (!selectedOutput || !midi.current) return;
+        const output = midi.current.outputs.get(selectedOutput);
+        output?.send(msg.data);
+        const [status, note, _] = msg.data;
+        const noteOn = status === 144;
+        const noteOff = status === 128;
+        // const afterTouch = status === 208
+        if (noteOn) setActiveNotes((prev) => (prev ? [...prev, note] : [note]));
+        if (noteOff)
+          setActiveNotes((prev) =>
+            prev?.filter((prevNote) => prevNote !== note)
+          );
+      };
     });
   }, [selectedInput, selectedOutput]);
 

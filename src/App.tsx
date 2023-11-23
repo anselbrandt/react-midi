@@ -47,11 +47,11 @@ function App() {
     navigator.requestMIDIAccess().then((midiAccess) => {
       Array.from(midiAccess.inputs).forEach((input) => {
         input[1].onmidimessage = (msg: any) => {
-          if (msg.currentTarget?.id !== selectedInput) return;
+          // if (msg.currentTarget?.id !== selectedInput) return;
           const [status, note, velocity] = msg.data;
           const noteOn = status === 144 ? "noteOn" : null;
           const noteOff = status === 128 ? "noteOff" : null;
-          const afterTouch = status === 208 ? "afterToouch" : null;
+          const afterTouch = status === 208 ? "afterTouch" : null;
           console.log(noteOn || noteOff || afterTouch, {
             status,
             note,

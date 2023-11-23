@@ -25,3 +25,20 @@
 .text-muted {
   color: #888;
 }
+
+.selected {
+  background-color: cornflowerblue;
+  color: whitesmoke;
+  font-weight: 600;
+}
+
+.list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.item {
+  margin-left: 0.5rem;
+  margin-right: 0.5srem;
+}

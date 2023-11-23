@@ -52,7 +52,10 @@ function App() {
     navigator.requestMIDIAccess().then((midiAccess) => {
       Array.from(midiAccess.inputs).forEach((input) => {
         input[1].onmidimessage = (msg: any) => {
-          // if (msg.currentTarget?.id !== selectedInput) return;
+          if (msg.currentTarget?.id !== selectedInput) return;
+          if (!selectedOutput) return;
+          const output = midiAccess.outputs.get(selectedOutput);
+          output?.send(msg.data);
           const [status, note, velocity] = msg.data;
           const noteOn = status === 144 ? "noteOn" : null;
           const noteOff = status === 128 ? "noteOff" : null;
@@ -65,7 +68,7 @@ function App() {
         };
       });
     });
-  });
+  }, [selectedInput, selectedOutput]);
 
   return (
     <>
@@ -73,6 +76,37 @@ function App() {
         <a href="https://webmidijs.org/" target="_blank">
           <img src={midiLogo} className="logo midi" alt="Web MIDI logo" />
         </a>
+      </div>
+
+      <div className="list">
+        <h3>Inputs:</h3>
+        <div className="list">
+          {inputs?.map((input, index) => (
+            <div key={index} className="item">
+              <button
+                className={selectedInput === input.id ? "selected" : ""}
+                onClick={() => handleSelectInput(input.id)}
+              >
+                {input.name}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="list">
+        <h3>Outputs:</h3>
+        <div className="list">
+          {outputs?.map((output, index) => (
+            <div key={index} className="item">
+              <button
+                className={selectedOutput === output.id ? "selected" : ""}
+                onClick={() => handleSelectOutput(output.id)}
+              >
+                {output.name}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       <Piano
@@ -86,29 +120,6 @@ function App() {
         width={1000}
         keyboardShortcuts={keyboardShortcuts}
       />
-
-      <h3>Inputs:</h3>
-      {inputs?.map((input, index) => (
-        <div key={index}>
-          <button
-            className={selectedInput === input.id ? "selected" : ""}
-            onClick={() => handleSelectInput(input.id)}
-          >
-            {input.name}
-          </button>
-        </div>
-      ))}
-      <h3>Outputs:</h3>
-      {outputs?.map((output, index) => (
-        <div key={index}>
-          <button
-            className={selectedOutput === output.id ? "selected" : ""}
-            onClick={() => handleSelectOutput(output.id)}
-          >
-            {output.name}
-          </button>
-        </div>
-      ))}
     </>
   );
 }

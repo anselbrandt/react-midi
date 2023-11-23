@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import midiLogo from "/webmidijs.svg";
 import "./App.css";
-import { useEffect, useRef, useState } from "react";
+import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
+import "react-piano/dist/styles.css";
 
 function App() {
   const midi = useRef<MIDIAccess>();
@@ -8,6 +10,14 @@ function App() {
   const [outputs, setOutputs] = useState<MIDIOutput[]>();
   const [selectedInput, setSelectedInput] = useState<string>();
   const [selectedOutput, setSelectedOutput] = useState<string>();
+
+  const firstNote = MidiNumbers.fromNote("c3");
+  const lastNote = MidiNumbers.fromNote("f5");
+  const keyboardShortcuts = KeyboardShortcuts.create({
+    firstNote: firstNote,
+    lastNote: lastNote,
+    keyboardConfig: KeyboardShortcuts.HOME_ROW,
+  });
 
   const handleClick = async () => {
     if (midi.current) return;
@@ -69,6 +79,30 @@ function App() {
           <img src={midiLogo} className="logo midi" alt="Web MIDI logo" />
         </a>
       </div>
+
+      <Piano
+        noteRange={{ first: firstNote, last: lastNote }}
+        playNote={(midiNumber: any) => {
+          console.log({ midiNumber });
+        }}
+        stopNote={(midiNumber: any) => {
+          console.log({ midiNumber });
+        }}
+        width={1000}
+        keyboardShortcuts={keyboardShortcuts}
+      />
+
+      <label htmlFor="input-select">Choose input:</label>
+      <select name="inputs" id="input-select">
+        <option value="">MIDI Inputs</option>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+        <option value="hamster">Hamster</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+        <option value="goldfish">Goldfish</option>
+      </select>
+
       <div>Input: {selectedInput}</div>
       <div>Output: {selectedOutput}</div>
       <div className="card">

@@ -25,3 +25,9 @@
 .text-muted {
   color: #888;
 }
+
+.selected {
+  background-color: cornflowerblue;
+  color: whitesmoke;
+  font-weight: 600;
+}

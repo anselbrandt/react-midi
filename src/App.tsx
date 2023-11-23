@@ -19,17 +19,6 @@ function App() {
     keyboardConfig: KeyboardShortcuts.HOME_ROW,
   });
 
-  const handleClick = async () => {
-    if (midi.current) return;
-    const midiAccess = await navigator.requestMIDIAccess({ sysex: false });
-    midi.current = midiAccess;
-    const inputValues = Array.from(midi.current.inputs.values());
-    setInputs(inputValues);
-    const outputValues = Array.from(midi.current.outputs.values());
-    setOutputs(outputValues);
-    console.log({ inputValues, outputValues });
-  };
-
   const handleSelectInput = (id: string) => {
     if (!midi.current) return;
     const input = midi.current.inputs.get(id);
@@ -46,12 +35,18 @@ function App() {
     setSelectedOutput(id);
   };
 
-  const handleGetStatus = () => {
-    if (!midi.current) return;
-    const inputValues = Array.from(midi.current.inputs.values());
-    const outputValues = Array.from(midi.current.outputs.values());
-    console.log({ inputValues, outputValues });
-  };
+  useEffect(() => {
+    const init = async () => {
+      if (midi.current) return;
+      const midiAccess = await navigator.requestMIDIAccess({ sysex: false });
+      midi.current = midiAccess;
+      const inputValues = Array.from(midi.current.inputs.values());
+      setInputs(inputValues);
+      const outputValues = Array.from(midi.current.outputs.values());
+      setOutputs(outputValues);
+    };
+    init();
+  }, []);
 
   useEffect(() => {
     navigator.requestMIDIAccess().then((midiAccess) => {
@@ -92,35 +87,26 @@ function App() {
         keyboardShortcuts={keyboardShortcuts}
       />
 
-      <label htmlFor="input-select">Choose input:</label>
-      <select name="inputs" id="input-select">
-        <option value="">MIDI Inputs</option>
-        <option value="dog">Dog</option>
-        <option value="cat">Cat</option>
-        <option value="hamster">Hamster</option>
-        <option value="parrot">Parrot</option>
-        <option value="spider">Spider</option>
-        <option value="goldfish">Goldfish</option>
-      </select>
-
-      <div>Input: {selectedInput}</div>
-      <div>Output: {selectedOutput}</div>
-      <div className="card">
-        <button onClick={handleClick}>click</button>
-      </div>
-      <div className="card">
-        <button onClick={handleGetStatus}>status</button>
-      </div>
       <h3>Inputs:</h3>
       {inputs?.map((input, index) => (
-        <div key={index} onClick={() => handleSelectInput(input.id)}>
-          {input.name}: {input.id}
+        <div key={index}>
+          <button
+            className={selectedInput === input.id ? "selected" : ""}
+            onClick={() => handleSelectInput(input.id)}
+          >
+            {input.name}
+          </button>
         </div>
       ))}
       <h3>Outputs:</h3>
       {outputs?.map((output, index) => (
-        <div key={index} onClick={() => handleSelectOutput(output.id)}>
-          {output.name}: {output.id}
+        <div key={index}>
+          <button
+            className={selectedOutput === output.id ? "selected" : ""}
+            onClick={() => handleSelectOutput(output.id)}
+          >
+            {output.name}
+          </button>
         </div>
       ))}
     </>

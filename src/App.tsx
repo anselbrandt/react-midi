@@ -10,6 +10,7 @@ function App() {
   const [outputs, setOutputs] = useState<MIDIOutput[]>();
   const [selectedInput, setSelectedInput] = useState<string>();
   const [selectedOutput, setSelectedOutput] = useState<string>();
+  const [activeNotes, setActiveNotes] = useState<string[]>();
 
   const firstNote = MidiNumbers.fromNote("c3");
   const lastNote = MidiNumbers.fromNote("f5");
@@ -35,6 +36,22 @@ function App() {
     setSelectedOutput(id);
   };
 
+  const handleNoteOn = (note: number) => {
+    navigator.requestMIDIAccess().then((midiAccess) => {
+      if (!selectedOutput) return;
+      const output = midiAccess.outputs.get(selectedOutput);
+      output?.send([144, note, 60]);
+    });
+  };
+
+  const handleNoteOff = (note: number) => {
+    navigator.requestMIDIAccess().then((midiAccess) => {
+      if (!selectedOutput) return;
+      const output = midiAccess.outputs.get(selectedOutput);
+      output?.send([128, note, 0]);
+    });
+  };
+
   useEffect(() => {
     const init = async () => {
       if (midi.current) return;
@@ -56,15 +73,16 @@ function App() {
           if (!selectedOutput) return;
           const output = midiAccess.outputs.get(selectedOutput);
           output?.send(msg.data);
-          const [status, note, velocity] = msg.data;
+          const [status, note, _] = msg.data;
           const noteOn = status === 144 ? "noteOn" : null;
           const noteOff = status === 128 ? "noteOff" : null;
-          const afterTouch = status === 208 ? "afterTouch" : null;
-          console.log(noteOn || noteOff || afterTouch, {
-            status,
-            note,
-            velocity,
-          });
+          // const afterTouch = status === 208 ? "afterTouch" : null;
+          if (noteOn)
+            setActiveNotes((prev) => (prev ? [...prev, note] : [note]));
+          if (noteOff)
+            setActiveNotes((prev) =>
+              prev?.filter((prevNote) => prevNote !== note)
+            );
         };
       });
     });
@@ -111,14 +129,15 @@ function App() {
 
       <Piano
         noteRange={{ first: firstNote, last: lastNote }}
-        playNote={(midiNumber: any) => {
-          console.log({ midiNumber });
+        playNote={(note: number) => {
+          handleNoteOn(note);
         }}
-        stopNote={(midiNumber: any) => {
-          console.log({ midiNumber });
+        stopNote={(note: number) => {
+          handleNoteOff(note);
         }}
         width={1000}
         keyboardShortcuts={keyboardShortcuts}
+        activeNotes={activeNotes}
       />
     </>
   );

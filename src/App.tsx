@@ -74,9 +74,9 @@ function App() {
           const output = midiAccess.outputs.get(selectedOutput);
           output?.send(msg.data);
           const [status, note, _] = msg.data;
-          const noteOn = status === 144 ? "noteOn" : null;
-          const noteOff = status === 128 ? "noteOff" : null;
-          // const afterTouch = status === 208 ? "afterTouch" : null;
+          const noteOn = status === 144;
+          const noteOff = status === 128;
+          // const afterTouch = status === 208
           if (noteOn)
             setActiveNotes((prev) => (prev ? [...prev, note] : [note]));
           if (noteOff)

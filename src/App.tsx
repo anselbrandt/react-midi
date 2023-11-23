@@ -3,6 +3,7 @@ import midiLogo from "/webmidijs.svg";
 import "./App.css";
 import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
 import "react-piano/dist/styles.css";
+import { getChord } from "./chords";
 
 function App() {
   const midi = useRef<MIDIAccess>();
@@ -10,7 +11,8 @@ function App() {
   const [outputs, setOutputs] = useState<MIDIOutput[]>();
   const [selectedInput, setSelectedInput] = useState<string>();
   const [selectedOutput, setSelectedOutput] = useState<string>();
-  const [activeNotes, setActiveNotes] = useState<string[]>();
+  const [activeNotes, setActiveNotes] = useState<number[]>();
+  const [chordNotes, setChordNotes] = useState<number[]>();
 
   const firstNote = MidiNumbers.fromNote("c3");
   const lastNote = MidiNumbers.fromNote("f5");
@@ -69,15 +71,22 @@ function App() {
         if (!selectedOutput || !midi.current) return;
         const output = midi.current.outputs.get(selectedOutput);
         output?.send(msg.data);
-        const [status, note, _] = msg.data;
+        const [status, note, velocity] = msg.data;
         const noteOn = status === 144;
         const noteOff = status === 128;
         // const afterTouch = status === 208
-        if (noteOn) setActiveNotes((prev) => (prev ? [...prev, note] : [note]));
-        if (noteOff)
-          setActiveNotes((prev) =>
-            prev?.filter((prevNote) => prevNote !== note)
+        if (noteOn) {
+          const chord = getChord(note);
+          setChordNotes(chord);
+          setActiveNotes((prev) => (prev ? [...prev, ...chord] : chord));
+        }
+        if (noteOff) {
+          chordNotes?.forEach((chordNote) =>
+            output?.send([128, chordNote, velocity])
           );
+          setActiveNotes([]);
+          setChordNotes([]);
+        }
       };
     });
   }, [selectedInput, selectedOutput]);

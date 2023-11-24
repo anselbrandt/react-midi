@@ -4,11 +4,11 @@ import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
 import "react-piano/dist/styles.css";
 import { getChord } from "./chords";
 import { Inputs, Outputs, Logo } from "./components";
+import { useMidi } from "./hooks";
 
 function App() {
   const midi = useRef<MIDIAccess>();
-  const [inputs, setInputs] = useState<MIDIInput[]>();
-  const [outputs, setOutputs] = useState<MIDIOutput[]>();
+  const { inputs, outputs } = useMidi(midi);
   const [selectedInput, setSelectedInput] = useState<string>();
   const [selectedOutput, setSelectedOutput] = useState<string>();
   const [activeNotes, setActiveNotes] = useState<number[]>();
@@ -49,19 +49,6 @@ function App() {
     const output = midi.current.outputs.get(selectedOutput);
     output?.send([128, note, 0]);
   };
-
-  useEffect(() => {
-    const init = async () => {
-      if (midi.current) return;
-      const midiAccess = await navigator.requestMIDIAccess({ sysex: false });
-      midi.current = midiAccess;
-      const inputValues = Array.from(midi.current.inputs.values());
-      setInputs(inputValues);
-      const outputValues = Array.from(midi.current.outputs.values());
-      setOutputs(outputValues);
-    };
-    init();
-  }, []);
 
   useEffect(() => {
     if (!midi.current) return;

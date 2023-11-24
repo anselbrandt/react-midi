@@ -44,7 +44,7 @@ function App() {
   }, [selectedInput, selectedOutput, disabled]);
 
   return (
-    <>
+    <div>
       <Logo />
       <Inputs
         inputs={inputs}
@@ -58,14 +58,30 @@ function App() {
         setSelectedOutput={setSelectedOutput}
         midi={midi}
       />
-      Disable Chord Generator:
-      <Toggle checked={disabled} handleChange={handleChange} />
+      <div className="list">
+        <h3>Options:</h3>
+        <div className="list">
+          <button className="item">Major</button>
+          <button className="item">Minor</button>
+          <button className="item">Inversion</button>
+          <button className="item">I</button>
+          <button className="item">III</button>
+          <button className="item">V</button>
+          <button className="item">Extended</button>
+          <button className="item">5th</button>
+          <button className="item">7th</button>
+          <button className="item">9th</button>
+          <button className="item">11th</button>
+        </div>
+      </div>
       <Piano
         activeNotes={activeNotes}
         selectedOutput={selectedOutput}
         midi={midi}
       />
-    </>
+      Disable Chord Generator:
+      <Toggle checked={disabled} handleChange={handleChange} />
+    </div>
   );
 }
 

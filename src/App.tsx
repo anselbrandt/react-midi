@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { getChord } from "./chords";
-import { Logo, Inputs, Outputs, Piano } from "./components";
+import { Logo, Inputs, Outputs, Piano, Toggle } from "./components";
 import { useMidiDevices } from "./hooks";
 
 function App() {
@@ -11,6 +11,9 @@ function App() {
   const [selectedOutput, setSelectedOutput] = useState<string>();
   const [activeNotes, setActiveNotes] = useState<number[]>();
   const [chordNotes, setChordNotes] = useState<number[]>();
+  const [isHarmonize, setIsHarmonize] = useState(true);
+
+  const handleChange = () => setIsHarmonize((prev) => !prev);
 
   useEffect(() => {
     if (!midi.current) return;
@@ -25,7 +28,7 @@ function App() {
         const noteOff = status === 128;
         // const afterTouch = status === 208
         if (noteOn) {
-          const chord = getChord(note);
+          const chord = getChord(note, isHarmonize);
           setChordNotes(chord);
           setActiveNotes((prev) => (prev ? [...prev, ...chord] : chord));
         }
@@ -38,7 +41,7 @@ function App() {
         }
       };
     });
-  }, [selectedInput, selectedOutput]);
+  }, [selectedInput, selectedOutput, isHarmonize]);
 
   return (
     <>
@@ -60,6 +63,10 @@ function App() {
         selectedOutput={selectedOutput}
         midi={midi}
       />
+      <div>
+        Harmononize:{" "}
+        <Toggle checked={isHarmonize} handleChange={handleChange} />
+      </div>
     </>
   );
 }

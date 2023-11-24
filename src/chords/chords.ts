@@ -1,1 +1,4 @@
-export const getChord = (note: number) => [note, note + 4, note + 7];
+export const getChord = (note: number, harmonize: boolean) => {
+  if (!harmonize) return [note];
+  return [note, note + 4, note + 7];
+};

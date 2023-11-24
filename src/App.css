@@ -39,9 +39,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .item {
   margin-left: 0.5rem;
-  margin-right: 0.5srem;
+  margin-right: 0.5rem;
 }

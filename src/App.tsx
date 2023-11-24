@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { getChord } from "./chords";
-import { Logo, Inputs, Outputs, Piano, Toggle } from "./components";
+import { Logo, Inputs, Outputs, Piano, Toggle, Options } from "./components";
 import { useMidiDevices } from "./hooks";
 
 function App() {
@@ -12,8 +12,11 @@ function App() {
   const [activeNotes, setActiveNotes] = useState<number[]>();
   const [chordNotes, setChordNotes] = useState<number[]>();
   const [disabled, setDisabled] = useState(false);
+  const [major, setMajor] = useState(true);
+  const [inversion, setInversiono] = useState("i");
+  const [extended, setExtended] = useState<number>(0);
 
-  const handleChange = () => setDisabled((prev) => !prev);
+  const handleDisable = () => setDisabled((prev) => !prev);
 
   useEffect(() => {
     if (!midi.current) return;
@@ -58,29 +61,21 @@ function App() {
         setSelectedOutput={setSelectedOutput}
         midi={midi}
       />
-      <div className="list">
-        <h3>Options:</h3>
-        <div className="list">
-          <button className="item">Major</button>
-          <button className="item">Minor</button>
-          <button className="item">Inversion</button>
-          <button className="item">I</button>
-          <button className="item">III</button>
-          <button className="item">V</button>
-          <button className="item">Extended</button>
-          <button className="item">5th</button>
-          <button className="item">7th</button>
-          <button className="item">9th</button>
-          <button className="item">11th</button>
-        </div>
-      </div>
+      <Options
+        major={major}
+        setMajor={setMajor}
+        inversion={inversion}
+        setInversion={setInversiono}
+        extended={extended}
+        setExtended={setExtended}
+      />
       <Piano
         activeNotes={activeNotes}
         selectedOutput={selectedOutput}
         midi={midi}
       />
       Disable Chord Generator:
-      <Toggle checked={disabled} handleChange={handleChange} />
+      <Toggle checked={disabled} handleChange={handleDisable} />
     </div>
   );
 }

@@ -1,9 +1,7 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
-import "react-piano/dist/styles.css";
 import { getChord } from "./chords";
-import { Inputs, Outputs, Logo } from "./components";
+import { Logo, Inputs, Outputs, Piano } from "./components";
 import { useMidi } from "./hooks";
 
 function App() {
@@ -13,14 +11,6 @@ function App() {
   const [selectedOutput, setSelectedOutput] = useState<string>();
   const [activeNotes, setActiveNotes] = useState<number[]>();
   const [chordNotes, setChordNotes] = useState<number[]>();
-
-  const firstNote = MidiNumbers.fromNote("c3");
-  const lastNote = MidiNumbers.fromNote("f5");
-  const keyboardShortcuts = KeyboardShortcuts.create({
-    firstNote: firstNote,
-    lastNote: lastNote,
-    keyboardConfig: KeyboardShortcuts.HOME_ROW,
-  });
 
   const handleSelectInput = (id: string) => {
     if (!midi.current) return;
@@ -92,16 +82,9 @@ function App() {
         handleSelectOutput={handleSelectOutput}
       />
       <Piano
-        noteRange={{ first: firstNote, last: lastNote }}
-        playNote={(note: number) => {
-          handleNoteOn(note);
-        }}
-        stopNote={(note: number) => {
-          handleNoteOff(note);
-        }}
-        width={1000}
-        keyboardShortcuts={keyboardShortcuts}
         activeNotes={activeNotes}
+        handleNoteOn={handleNoteOn}
+        handleNoteOff={handleNoteOff}
       />
     </>
   );

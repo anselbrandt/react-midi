@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { getChord } from "./chords";
 import { Logo, Inputs, Outputs, Piano } from "./components";
-import { useMidi } from "./hooks";
+import { useMidiDevices } from "./hooks";
 
 function App() {
   const midi = useRef<MIDIAccess>();
-  const { inputs, outputs } = useMidi(midi);
+  const { inputs, outputs } = useMidiDevices(midi);
   const [selectedInput, setSelectedInput] = useState<string>();
   const [selectedOutput, setSelectedOutput] = useState<string>();
   const [activeNotes, setActiveNotes] = useState<number[]>();

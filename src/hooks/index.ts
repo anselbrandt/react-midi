@@ -1,1 +1,1 @@
-export * from "./useMidi";
+export * from "./useMidiDevices";

@@ -1,6 +1,8 @@
 import { useState, useEffect, MutableRefObject } from "react";
 
-export const useMidi = (midi: MutableRefObject<MIDIAccess | undefined>) => {
+export const useMidiDevices = (
+  midi: MutableRefObject<MIDIAccess | undefined>
+) => {
   const [inputs, setInputs] = useState<MIDIInput[]>();
   const [outputs, setOutputs] = useState<MIDIOutput[]>();
   useEffect(() => {

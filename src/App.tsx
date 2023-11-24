@@ -58,15 +58,13 @@ function App() {
         setSelectedOutput={setSelectedOutput}
         midi={midi}
       />
+      Disable Chord Generator:
+      <Toggle checked={disabled} handleChange={handleChange} />
       <Piano
         activeNotes={activeNotes}
         selectedOutput={selectedOutput}
         midi={midi}
       />
-      <div>
-        Disable Chord Generator:
-        <Toggle checked={disabled} handleChange={handleChange} />
-      </div>
     </>
   );
 }

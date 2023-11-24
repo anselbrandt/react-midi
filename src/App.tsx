@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import midiLogo from "/webmidijs.svg";
+import { FC, useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
 import "react-piano/dist/styles.css";
 import { getChord } from "./chords";
+import { Inputs, Outputs, Logo } from "./components";
 
 function App() {
   const midi = useRef<MIDIAccess>();
@@ -93,43 +93,17 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://webmidijs.org/" target="_blank">
-          <img src={midiLogo} className="logo midi" alt="Web MIDI logo" />
-        </a>
-      </div>
-
-      <div className="list">
-        <h3>Inputs:</h3>
-        <div className="list">
-          {inputs?.map((input, index) => (
-            <div key={index} className="item">
-              <button
-                className={selectedInput === input.id ? "selected" : ""}
-                onClick={() => handleSelectInput(input.id)}
-              >
-                {input.name}
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="list">
-        <h3>Outputs:</h3>
-        <div className="list">
-          {outputs?.map((output, index) => (
-            <div key={index} className="item">
-              <button
-                className={selectedOutput === output.id ? "selected" : ""}
-                onClick={() => handleSelectOutput(output.id)}
-              >
-                {output.name}
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
+      <Logo />
+      <Inputs
+        inputs={inputs}
+        selectedInput={selectedInput}
+        handleSelectInput={handleSelectInput}
+      />
+      <Outputs
+        outputs={outputs}
+        selectedOutput={selectedOutput}
+        handleSelectOutput={handleSelectOutput}
+      />
       <Piano
         noteRange={{ first: firstNote, last: lastNote }}
         playNote={(note: number) => {

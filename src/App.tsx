@@ -28,18 +28,6 @@ function App() {
     setSelectedOutput(id);
   };
 
-  const handleNoteOn = (note: number) => {
-    if (!selectedOutput || !midi.current) return;
-    const output = midi.current.outputs.get(selectedOutput);
-    output?.send([144, note, 60]);
-  };
-
-  const handleNoteOff = (note: number) => {
-    if (!selectedOutput || !midi.current) return;
-    const output = midi.current.outputs.get(selectedOutput);
-    output?.send([128, note, 0]);
-  };
-
   useEffect(() => {
     if (!midi.current) return;
     Array.from(midi.current.inputs).forEach((input) => {
@@ -83,8 +71,8 @@ function App() {
       />
       <Piano
         activeNotes={activeNotes}
-        handleNoteOn={handleNoteOn}
-        handleNoteOff={handleNoteOff}
+        selectedOutput={selectedOutput}
+        midi={midi}
       />
     </>
   );

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, MutableRefObject } from "react";
 import {
   Piano as ReactPiano,
   KeyboardShortcuts,
@@ -7,15 +7,15 @@ import {
 import "react-piano/dist/styles.css";
 
 interface PianoProps {
-  handleNoteOn: (note: number) => void;
-  handleNoteOff: (note: number) => void;
   activeNotes: number[] | undefined;
+  selectedOutput: string | undefined;
+  midi: MutableRefObject<MIDIAccess | undefined>;
 }
 
 export const Piano: FC<PianoProps> = ({
-  handleNoteOn,
-  handleNoteOff,
   activeNotes,
+  selectedOutput,
+  midi,
 }) => {
   const firstNote = MidiNumbers.fromNote("c3");
   const lastNote = MidiNumbers.fromNote("f5");
@@ -24,6 +24,18 @@ export const Piano: FC<PianoProps> = ({
     lastNote: lastNote,
     keyboardConfig: KeyboardShortcuts.HOME_ROW,
   });
+
+  const handleNoteOn = (note: number) => {
+    if (!selectedOutput || !midi.current) return;
+    const output = midi.current.outputs.get(selectedOutput);
+    output?.send([144, note, 60]);
+  };
+
+  const handleNoteOff = (note: number) => {
+    if (!selectedOutput || !midi.current) return;
+    const output = midi.current.outputs.get(selectedOutput);
+    output?.send([128, note, 0]);
+  };
 
   return (
     <ReactPiano

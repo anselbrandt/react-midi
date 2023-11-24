@@ -12,22 +12,6 @@ function App() {
   const [activeNotes, setActiveNotes] = useState<number[]>();
   const [chordNotes, setChordNotes] = useState<number[]>();
 
-  const handleSelectInput = (id: string) => {
-    if (!midi.current) return;
-    const input = midi.current.inputs.get(id);
-    if (!input) return;
-    input.open();
-    setSelectedInput(id);
-  };
-
-  const handleSelectOutput = (id: string) => {
-    if (!midi.current) return;
-    const output = midi.current.outputs.get(id);
-    if (!output) return;
-    output.open();
-    setSelectedOutput(id);
-  };
-
   useEffect(() => {
     if (!midi.current) return;
     Array.from(midi.current.inputs).forEach((input) => {
@@ -62,12 +46,14 @@ function App() {
       <Inputs
         inputs={inputs}
         selectedInput={selectedInput}
-        handleSelectInput={handleSelectInput}
+        setSelectedInput={setSelectedInput}
+        midi={midi}
       />
       <Outputs
         outputs={outputs}
         selectedOutput={selectedOutput}
-        handleSelectOutput={handleSelectOutput}
+        setSelectedOutput={setSelectedOutput}
+        midi={midi}
       />
       <Piano
         activeNotes={activeNotes}

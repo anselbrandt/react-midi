@@ -1,16 +1,26 @@
-import { FC } from "react";
+import { FC, Dispatch, SetStateAction, MutableRefObject } from "react";
 
 interface OutputProps {
   outputs: MIDIOutput[] | undefined;
   selectedOutput: string | undefined;
-  handleSelectOutput: (id: string) => void;
+  setSelectedOutput: Dispatch<SetStateAction<string | undefined>>;
+  midi: MutableRefObject<MIDIAccess | undefined>;
 }
 
 export const Outputs: FC<OutputProps> = ({
   outputs,
   selectedOutput,
-  handleSelectOutput,
+  setSelectedOutput,
+  midi,
 }) => {
+  const handleSelectOutput = (id: string) => {
+    if (!midi.current) return;
+    const output = midi.current.outputs.get(id);
+    if (!output) return;
+    output.open();
+    setSelectedOutput(id);
+  };
+
   if (!outputs?.length) return null;
   return (
     <div className="list">

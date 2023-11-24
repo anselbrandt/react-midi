@@ -11,9 +11,9 @@ function App() {
   const [selectedOutput, setSelectedOutput] = useState<string>();
   const [activeNotes, setActiveNotes] = useState<number[]>();
   const [chordNotes, setChordNotes] = useState<number[]>();
-  const [isHarmonize, setIsHarmonize] = useState(true);
+  const [disabled, setDisabled] = useState(false);
 
-  const handleChange = () => setIsHarmonize((prev) => !prev);
+  const handleChange = () => setDisabled((prev) => !prev);
 
   useEffect(() => {
     if (!midi.current) return;
@@ -28,7 +28,7 @@ function App() {
         const noteOff = status === 128;
         // const afterTouch = status === 208
         if (noteOn) {
-          const chord = getChord(note, isHarmonize);
+          const chord = getChord({ note, disabled });
           setChordNotes(chord);
           setActiveNotes((prev) => (prev ? [...prev, ...chord] : chord));
         }
@@ -41,7 +41,7 @@ function App() {
         }
       };
     });
-  }, [selectedInput, selectedOutput, isHarmonize]);
+  }, [selectedInput, selectedOutput, disabled]);
 
   return (
     <>
@@ -64,8 +64,8 @@ function App() {
         midi={midi}
       />
       <div>
-        Harmononize:{" "}
-        <Toggle checked={isHarmonize} handleChange={handleChange} />
+        Disable Chord Generator:
+        <Toggle checked={disabled} handleChange={handleChange} />
       </div>
     </>
   );

@@ -68,12 +68,6 @@ export const Options: FC<OptionsProps> = ({
           Extended
         </button>
         <button
-          className={`item ${extended === 5 ? "selected" : ""}`}
-          onClick={() => setExtended(5)}
-        >
-          5th
-        </button>
-        <button
           className={`item ${extended === 7 ? "selected" : ""}`}
           onClick={() => setExtended(7)}
         >

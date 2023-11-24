@@ -31,7 +31,13 @@ function App() {
         const noteOff = status === 128;
         // const afterTouch = status === 208
         if (noteOn) {
-          const chord = getChord({ note, disabled });
+          const chord = getChord({
+            note,
+            disabled,
+            major,
+            inversion,
+            extended,
+          });
           setChordNotes(chord);
           setActiveNotes((prev) => (prev ? [...prev, ...chord] : chord));
         }
@@ -44,7 +50,7 @@ function App() {
         }
       };
     });
-  }, [selectedInput, selectedOutput, disabled]);
+  }, [selectedInput, selectedOutput, disabled, major, inversion, extended]);
 
   return (
     <div>

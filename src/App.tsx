@@ -9,6 +9,7 @@ function App() {
   const [selectedInput, setSelectedInput] = useState<string>();
   const [selectedOutput, setSelectedOutput] = useState<string>();
   const [activeNotes, setActiveNotes] = useState<number[]>([]);
+  const [notesOn, setNotesOn] = useState<number[]>([]);
 
   useEffect(() => {
     if (!midi.current) return;
@@ -39,12 +40,15 @@ function App() {
 
   const onPlayNoteInput = (note: number) => {
     if (!midi.current || !selectedOutput) return;
+    if (notesOn.includes(note)) return;
+    setNotesOn((prev) => [...prev, note]);
     const output = midi.current.outputs.get(selectedOutput);
     output?.send([144, note, 60]);
   };
 
   const onStopNoteInput = (note: number) => {
     if (!midi.current || !selectedOutput) return;
+    setNotesOn((prev) => [...prev].filter((prevNote) => prevNote !== note));
     const output = midi.current.outputs.get(selectedOutput);
     output?.send([128, note, 0]);
   };

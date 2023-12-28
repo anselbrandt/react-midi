@@ -24,7 +24,11 @@ function App() {
         const noteOn = status === 144;
         const noteOff = status === 128 || velocity === 0;
         // const afterTouch = status === 208;
-        if (noteOn) setActiveNotes([note]);
+        if (noteOn)
+          setActiveNotes((prev) => {
+            if (prev.includes(note)) return prev;
+            return [...prev, note];
+          });
         if (noteOff)
           setActiveNotes((prev) =>
             [...prev].filter((prevNote) => prevNote !== note)
@@ -33,9 +37,17 @@ function App() {
     });
   }, [selectedInput, selectedOutput]);
 
-  const onPlayNoteInput = (msg: any) => console.log("on", msg);
+  const onPlayNoteInput = (note: number) => {
+    if (!midi.current || !selectedOutput) return;
+    const output = midi.current.outputs.get(selectedOutput);
+    output?.send([144, note, 60]);
+  };
 
-  const onStopNoteInput = (msg: any) => console.log("off", msg);
+  const onStopNoteInput = (note: number) => {
+    if (!midi.current || !selectedOutput) return;
+    const output = midi.current.outputs.get(selectedOutput);
+    output?.send([128, note, 0]);
+  };
 
   return (
     <>

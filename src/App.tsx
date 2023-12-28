@@ -2,14 +2,31 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Logo, Inputs, Outputs, Piano } from "./components";
 import { useMidiDevices } from "./hooks";
+import { ElectricPiano } from "smplr";
 
 function App() {
+  let epiano = useRef<ElectricPiano | null>();
+  const [isSound, setIsSound] = useState(false);
   const midi = useRef<MIDIAccess>();
   const { inputs, outputs } = useMidiDevices(midi);
   const [selectedInput, setSelectedInput] = useState<string>();
   const [selectedOutput, setSelectedOutput] = useState<string>();
   const [activeNotes, setActiveNotes] = useState<number[]>([]);
   const [notesOn, setNotesOn] = useState<number[]>([]);
+  const [activeSamples, setActiveSamples] = useState<number[]>([]);
+
+  const handleInit = () => {
+    if (epiano.current) return;
+    epiano.current = new ElectricPiano(new AudioContext(), {
+      instrument: "WurlitzerEP200",
+    });
+  };
+
+  const handleSound = () => {
+    if (epiano.current) epiano.current = null;
+    if (!epiano.current) handleInit();
+    setIsSound((prev) => !prev);
+  };
 
   useEffect(() => {
     if (!midi.current) return;
@@ -39,6 +56,11 @@ function App() {
   }, [selectedInput, selectedOutput]);
 
   const onPlayNoteInput = (note: number) => {
+    if (epiano.current) {
+      if (activeSamples.includes(note)) return;
+      setActiveSamples((prev) => [...prev, note]);
+      epiano.current.start(note);
+    }
     if (!midi.current || !selectedOutput) return;
     if (notesOn.includes(note)) return;
     setNotesOn((prev) => [...prev, note]);
@@ -47,6 +69,12 @@ function App() {
   };
 
   const onStopNoteInput = (note: number) => {
+    if (epiano.current) {
+      setActiveSamples((prev) =>
+        [...prev].filter((prevNote) => prevNote !== note)
+      );
+      epiano.current.stop(note);
+    }
     if (!midi.current || !selectedOutput) return;
     setNotesOn((prev) => [...prev].filter((prevNote) => prevNote !== note));
     const output = midi.current.outputs.get(selectedOutput);
@@ -56,6 +84,16 @@ function App() {
   return (
     <>
       <Logo />
+      <div className="list">
+        <h3>Sound:</h3>
+        <div className="list">
+          <div className="item">
+            <button className={isSound ? "selected" : ""} onClick={handleSound}>
+              {isSound ? "On" : "Off"}
+            </button>
+          </div>
+        </div>
+      </div>
       <Inputs
         inputs={inputs}
         selectedInput={selectedInput}

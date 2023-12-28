@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { Logo, Inputs, Outputs, Piano } from "./components";
+import { Logo, Inputs, Outputs, Piano, Sound } from "./components";
 import { useMidiDevices } from "./hooks";
 import { ElectricPiano } from "smplr";
 
@@ -84,16 +84,7 @@ function App() {
   return (
     <>
       <Logo />
-      <div className="list">
-        <h3>Sound:</h3>
-        <div className="list">
-          <div className="item">
-            <button className={isSound ? "selected" : ""} onClick={handleSound}>
-              {isSound ? "On" : "Off"}
-            </button>
-          </div>
-        </div>
-      </div>
+      <Sound isSound={isSound} handleSound={handleSound} />
       <Inputs
         inputs={inputs}
         selectedInput={selectedInput}

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { getChord } from "./chords";
-import { Logo, Inputs, Outputs, Piano, Toggle } from "./components";
+import { Logo, Inputs, Outputs, Piano } from "./components";
 import { useMidiDevices } from "./hooks";
 
 function App() {
@@ -9,11 +8,7 @@ function App() {
   const { inputs, outputs } = useMidiDevices(midi);
   const [selectedInput, setSelectedInput] = useState<string>();
   const [selectedOutput, setSelectedOutput] = useState<string>();
-  const [activeNotes, setActiveNotes] = useState<number[]>();
-  const [chordNotes, setChordNotes] = useState<number[]>();
-  const [disabled, setDisabled] = useState(false);
-
-  const handleChange = () => setDisabled((prev) => !prev);
+  const [activeNotes, setActiveNotes] = useState<number[]>([]);
 
   useEffect(() => {
     if (!midi.current) return;
@@ -24,24 +19,23 @@ function App() {
         const output = midi.current.outputs.get(selectedOutput);
         output?.send(msg.data);
         const [status, note, velocity] = msg.data;
+        const activeSense = status === 254;
+        if (activeSense) return;
         const noteOn = status === 144;
-        const noteOff = status === 128;
-        // const afterTouch = status === 208
-        if (noteOn) {
-          const chord = getChord({ note, disabled });
-          setChordNotes(chord);
-          setActiveNotes((prev) => (prev ? [...prev, ...chord] : chord));
-        }
-        if (noteOff) {
-          chordNotes?.forEach((chordNote) =>
-            output?.send([128, chordNote, velocity])
+        const noteOff = status === 128 || velocity === 0;
+        // const afterTouch = status === 208;
+        if (noteOn) setActiveNotes([note]);
+        if (noteOff)
+          setActiveNotes((prev) =>
+            [...prev].filter((prevNote) => prevNote !== note)
           );
-          setActiveNotes([]);
-          setChordNotes([]);
-        }
       };
     });
-  }, [selectedInput, selectedOutput, disabled]);
+  }, [selectedInput, selectedOutput]);
+
+  const onPlayNoteInput = (msg: any) => console.log("on", msg);
+
+  const onStopNoteInput = (msg: any) => console.log("off", msg);
 
   return (
     <>
@@ -62,11 +56,9 @@ function App() {
         activeNotes={activeNotes}
         selectedOutput={selectedOutput}
         midi={midi}
+        onPlayNoteInput={onPlayNoteInput}
+        onStopNoteInput={onStopNoteInput}
       />
-      <div>
-        Disable Chord Generator:
-        <Toggle checked={disabled} handleChange={handleChange} />
-      </div>
     </>
   );
 }

@@ -10,12 +10,16 @@ interface PianoProps {
   activeNotes: number[] | undefined;
   selectedOutput: string | undefined;
   midi: MutableRefObject<MIDIAccess | undefined>;
+  onPlayNoteInput: (note: number) => void;
+  onStopNoteInput: (note: number) => void;
 }
 
 export const Piano: FC<PianoProps> = ({
   activeNotes,
   selectedOutput,
   midi,
+  onPlayNoteInput,
+  onStopNoteInput,
 }) => {
   const firstNote = MidiNumbers.fromNote("c3");
   const lastNote = MidiNumbers.fromNote("f5");
@@ -49,6 +53,8 @@ export const Piano: FC<PianoProps> = ({
       width={1000}
       keyboardShortcuts={keyboardShortcuts}
       activeNotes={activeNotes}
+      onPlayNoteInput={onPlayNoteInput}
+      onStopNoteInput={onStopNoteInput}
     />
   );
 };

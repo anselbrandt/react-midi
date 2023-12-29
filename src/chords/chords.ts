@@ -30,5 +30,6 @@ export const getChord = ({
   const root = rootMap[key];
   if (extension === 7) return [root, root + 4, root + 7, root + 11];
   if (extension === 9) return [root, root + 4, root + 7, root + 14];
+  if (extension === 11) return [root, root + 4, root + 7, root + 17];
   return [root, root + 4, root + 7];
 };

@@ -11,7 +11,7 @@ export const Extended: FC<ExtendedProps> = ({
 }) => {
   return (
     <div className="card">
-      {[5, 7, 9].map((ext, index) => (
+      {[5, 7, 9, 11].map((ext, index) => (
         <button
           key={index}
           className="round"

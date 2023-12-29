@@ -33,6 +33,7 @@ function App() {
     if (epiano.current) return;
     epiano.current = new ElectricPiano(new AudioContext(), {
       instrument: "PianetT",
+      volume: 60,
     });
   };
 
@@ -89,10 +90,14 @@ function App() {
         key: selectedKey,
         disabled,
       });
-      setChordNotes(chord);
-      chord.forEach((chordNote) => {
-        if (epiano.current) epiano.current.start(chordNote);
-      });
+      if (!disabled) {
+        setChordNotes(chord);
+        chord.forEach((chordNote) => {
+          if (epiano.current) epiano.current.start(chordNote);
+        });
+      } else {
+        if (epiano.current) epiano.current.start(note);
+      }
     }
     if (!midi.current || !selectedOutput) return;
     if (notesOn.includes(note)) return;
@@ -106,10 +111,14 @@ function App() {
       setActiveSamples((prev) =>
         [...prev].filter((prevNote) => prevNote !== note)
       );
-      chordNotes.forEach((chordNote) => {
-        if (epiano.current) epiano.current.stop(chordNote);
-      });
-      setChordNotes([]);
+      if (!disabled) {
+        chordNotes.forEach((chordNote) => {
+          if (epiano.current) epiano.current.stop(chordNote);
+        });
+        setChordNotes([]);
+      } else {
+        if (epiano.current) epiano.current.stop(note);
+      }
     }
     if (!midi.current || !selectedOutput) return;
     setNotesOn((prev) => [...prev].filter((prevNote) => prevNote !== note));

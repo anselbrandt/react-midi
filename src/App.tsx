@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { Logo, Inputs, Outputs, Piano, Sound } from "./components";
+import {
+  Logo,
+  Inputs,
+  Outputs,
+  Piano,
+  Sound,
+  TonalSelector,
+} from "./components";
 import { useMidiDevices } from "./hooks";
 import { ElectricPiano } from "smplr";
 
@@ -14,11 +21,12 @@ function App() {
   const [activeNotes, setActiveNotes] = useState<number[]>([]);
   const [notesOn, setNotesOn] = useState<number[]>([]);
   const [activeSamples, setActiveSamples] = useState<number[]>([]);
+  const [selectedTone, setSelectedTone] = useState("C");
 
   const handleInit = () => {
     if (epiano.current) return;
     epiano.current = new ElectricPiano(new AudioContext(), {
-      instrument: "WurlitzerEP200",
+      instrument: "PianetT",
     });
   };
 
@@ -26,6 +34,10 @@ function App() {
     if (epiano.current) epiano.current = null;
     if (!epiano.current) handleInit();
     setIsSound((prev) => !prev);
+  };
+
+  const handleSelectTone = (tone: string) => {
+    setSelectedTone(tone);
   };
 
   useEffect(() => {
@@ -103,6 +115,10 @@ function App() {
         midi={midi}
         onPlayNoteInput={onPlayNoteInput}
         onStopNoteInput={onStopNoteInput}
+      />
+      <TonalSelector
+        selectedTone={selectedTone}
+        handleSelectTone={handleSelectTone}
       />
     </>
   );

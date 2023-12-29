@@ -2,6 +2,7 @@ interface Options {
   note: number;
   extension: number;
   key: string;
+  disabled: boolean;
 }
 
 const rootMap: Record<string, number> = {
@@ -19,8 +20,15 @@ const rootMap: Record<string, number> = {
   B: 71,
 };
 
-export const getChord = ({ note, extension, key }: Options): number[] => {
-  console.log(note - 48, extension, key);
+export const getChord = ({
+  note,
+  extension,
+  key,
+  disabled,
+}: Options): number[] => {
+  if (disabled) return [note];
   const root = rootMap[key];
+  if (extension === 7) return [root, root + 4, root + 7, root + 11];
+  if (extension === 9) return [root, root + 4, root + 7, root + 14];
   return [root, root + 4, root + 7];
 };

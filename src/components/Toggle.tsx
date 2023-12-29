@@ -1,16 +1,24 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import "./Toggle.css";
 
 interface ToggleProps {
   checked: boolean;
   handleChange: () => void;
+  children?: ReactNode;
 }
 
-export const Toggle: FC<ToggleProps> = ({ checked, handleChange }) => {
+export const Toggle: FC<ToggleProps> = ({
+  checked,
+  handleChange,
+  children,
+}) => {
   return (
-    <label className="switch">
-      <input type="checkbox" onChange={handleChange} checked={checked} />
-      <span className="slider round"></span>
-    </label>
+    <>
+      <span className="text">{children}</span>
+      <label className="switch">
+        <input type="checkbox" onChange={handleChange} checked={checked} />
+        <span className="slider rounded"></span>
+      </label>
+    </>
   );
 };

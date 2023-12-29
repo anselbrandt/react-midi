@@ -8,6 +8,7 @@ import {
   Sound,
   TonalSelector,
   Extended,
+  Toggle,
 } from "./components";
 import { useMidiDevices } from "./hooks";
 import { ElectricPiano } from "smplr";
@@ -26,6 +27,7 @@ function App() {
   const [selectedKey, setSelectedKey] = useState("C");
   const [selectedExtension, setSelectedExtension] = useState(5);
   const [chordNotes, setChordNotes] = useState<number[]>([]);
+  const [disabled, setDisabled] = useState(false);
 
   const handleInit = () => {
     if (epiano.current) return;
@@ -47,6 +49,8 @@ function App() {
   const handleSelectExtension = (ext: number) => {
     setSelectedExtension(ext);
   };
+
+  const handleDisabled = () => setDisabled((prev) => !prev);
 
   useEffect(() => {
     if (!midi.current) return;
@@ -83,6 +87,7 @@ function App() {
         note,
         extension: selectedExtension,
         key: selectedKey,
+        disabled,
       });
       setChordNotes(chord);
       chord.forEach((chordNote) => {
@@ -135,6 +140,9 @@ function App() {
         onPlayNoteInput={onPlayNoteInput}
         onStopNoteInput={onStopNoteInput}
       />
+      <Toggle handleChange={handleDisabled} checked={!disabled}>
+        Chord generator
+      </Toggle>
       <TonalSelector
         selectedKey={selectedKey}
         handleSelectKey={handleSelectKey}

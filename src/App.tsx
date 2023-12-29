@@ -11,6 +11,7 @@ import {
 } from "./components";
 import { useMidiDevices } from "./hooks";
 import { ElectricPiano } from "smplr";
+import { getChord } from "./chords";
 
 function App() {
   let epiano = useRef<ElectricPiano | null>();
@@ -22,8 +23,9 @@ function App() {
   const [activeNotes, setActiveNotes] = useState<number[]>([]);
   const [notesOn, setNotesOn] = useState<number[]>([]);
   const [activeSamples, setActiveSamples] = useState<number[]>([]);
-  const [selectedTone, setSelectedTone] = useState("C");
+  const [selectedKey, setSelectedKey] = useState("C");
   const [selectedExtension, setSelectedExtension] = useState(5);
+  const [chordNotes, setChordNotes] = useState<number[]>([]);
 
   const handleInit = () => {
     if (epiano.current) return;
@@ -38,8 +40,8 @@ function App() {
     setIsSound((prev) => !prev);
   };
 
-  const handleSelectTone = (tone: string) => {
-    setSelectedTone(tone);
+  const handleSelectKey = (key: string) => {
+    setSelectedKey(key);
   };
 
   const handleSelectExtension = (ext: number) => {
@@ -77,7 +79,15 @@ function App() {
     if (epiano.current) {
       if (activeSamples.includes(note)) return;
       setActiveSamples((prev) => [...prev, note]);
-      epiano.current.start(note);
+      const chord = getChord({
+        note,
+        extension: selectedExtension,
+        key: selectedKey,
+      });
+      setChordNotes(chord);
+      chord.forEach((chordNote) => {
+        if (epiano.current) epiano.current.start(chordNote);
+      });
     }
     if (!midi.current || !selectedOutput) return;
     if (notesOn.includes(note)) return;
@@ -91,7 +101,10 @@ function App() {
       setActiveSamples((prev) =>
         [...prev].filter((prevNote) => prevNote !== note)
       );
-      epiano.current.stop(note);
+      chordNotes.forEach((chordNote) => {
+        if (epiano.current) epiano.current.stop(chordNote);
+      });
+      setChordNotes([]);
     }
     if (!midi.current || !selectedOutput) return;
     setNotesOn((prev) => [...prev].filter((prevNote) => prevNote !== note));
@@ -123,8 +136,8 @@ function App() {
         onStopNoteInput={onStopNoteInput}
       />
       <TonalSelector
-        selectedTone={selectedTone}
-        handleSelectTone={handleSelectTone}
+        selectedKey={selectedKey}
+        handleSelectKey={handleSelectKey}
       />
       <Extended
         selectedExtension={selectedExtension}

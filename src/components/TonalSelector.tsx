@@ -1,13 +1,13 @@
 import { FC } from "react";
 
 interface TonalSelectorProps {
-  selectedTone: string;
-  handleSelectTone: (str: string) => void;
+  selectedKey: string;
+  handleSelectKey: (str: string) => void;
 }
 
 export const TonalSelector: FC<TonalSelectorProps> = ({
-  selectedTone,
-  handleSelectTone,
+  selectedKey,
+  handleSelectKey,
 }) => {
   return (
     <div className="card">
@@ -16,9 +16,9 @@ export const TonalSelector: FC<TonalSelectorProps> = ({
           <button
             key={index}
             className="round"
-            onClick={() => handleSelectTone(key)}
+            onClick={() => handleSelectKey(key)}
             style={{
-              backgroundColor: selectedTone === key ? "cornflowerblue" : "",
+              backgroundColor: selectedKey === key ? "cornflowerblue" : "",
               marginRight: key === "F#" ? 50 : "",
             }}
           >
@@ -31,9 +31,9 @@ export const TonalSelector: FC<TonalSelectorProps> = ({
           <button
             key={index}
             className="round"
-            onClick={() => handleSelectTone(key)}
+            onClick={() => handleSelectKey(key)}
             style={{
-              backgroundColor: selectedTone === key ? "cornflowerblue" : "",
+              backgroundColor: selectedKey === key ? "cornflowerblue" : "",
             }}
           >
             {key}

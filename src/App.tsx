@@ -7,6 +7,7 @@ import {
   Piano,
   Sound,
   TonalSelector,
+  Extended,
 } from "./components";
 import { useMidiDevices } from "./hooks";
 import { ElectricPiano } from "smplr";
@@ -22,6 +23,7 @@ function App() {
   const [notesOn, setNotesOn] = useState<number[]>([]);
   const [activeSamples, setActiveSamples] = useState<number[]>([]);
   const [selectedTone, setSelectedTone] = useState("C");
+  const [selectedExtension, setSelectedExtension] = useState(5);
 
   const handleInit = () => {
     if (epiano.current) return;
@@ -38,6 +40,10 @@ function App() {
 
   const handleSelectTone = (tone: string) => {
     setSelectedTone(tone);
+  };
+
+  const handleSelectExtension = (ext: number) => {
+    setSelectedExtension(ext);
   };
 
   useEffect(() => {
@@ -119,6 +125,10 @@ function App() {
       <TonalSelector
         selectedTone={selectedTone}
         handleSelectTone={handleSelectTone}
+      />
+      <Extended
+        selectedExtension={selectedExtension}
+        handleSelectExtension={handleSelectExtension}
       />
     </>
   );

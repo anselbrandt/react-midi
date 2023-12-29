@@ -22,7 +22,7 @@ export const Piano: FC<PianoProps> = ({
   onStopNoteInput,
 }) => {
   const firstNote = MidiNumbers.fromNote("c3");
-  const lastNote = MidiNumbers.fromNote("f5");
+  const lastNote = MidiNumbers.fromNote("b3");
   const keyboardShortcuts = KeyboardShortcuts.create({
     firstNote: firstNote,
     lastNote: lastNote,
@@ -50,7 +50,7 @@ export const Piano: FC<PianoProps> = ({
       stopNote={(note: number) => {
         handleNoteOff(note);
       }}
-      width={1000}
+      width={500}
       keyboardShortcuts={keyboardShortcuts}
       activeNotes={activeNotes}
       onPlayNoteInput={onPlayNoteInput}

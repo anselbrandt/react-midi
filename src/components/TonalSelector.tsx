@@ -10,7 +10,7 @@ export const TonalSelector: FC<TonalSelectorProps> = ({
   handleSelectTone,
 }) => {
   return (
-    <div>
+    <div className="card">
       <div>
         {["C#", "Eb", "F#", "G#", "Bb"].map((key, index) => (
           <button

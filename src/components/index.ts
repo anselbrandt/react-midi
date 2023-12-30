@@ -6,3 +6,4 @@ export * from "./Toggle";
 export * from "./Sound";
 export * from "./TonalSelector";
 export * from "./Extended";
+export * from "./Footer"

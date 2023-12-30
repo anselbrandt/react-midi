@@ -6,18 +6,18 @@ interface Options {
 }
 
 const keyMap: Record<string, number> = {
-  C: 60,
-  "C#": 61,
-  D: 62,
-  Eb: 63,
-  E: 64,
-  F: 65,
-  "F#": 66,
-  G: 67,
-  "G#": 68,
-  A: 69,
-  Bb: 70,
-  B: 71,
+  C: 48,
+  "C#": 49,
+  D: 50,
+  Eb: 51,
+  E: 52,
+  F: 53,
+  "F#": 54,
+  G: 55,
+  "G#": 56,
+  A: 57,
+  Bb: 58,
+  B: 59,
 };
 
 const inversionMap: Record<number, number> = {

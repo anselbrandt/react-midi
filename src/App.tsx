@@ -9,6 +9,7 @@ import {
   TonalSelector,
   Extended,
   Toggle,
+  Footer
 } from "./components";
 import { useMidiDevices } from "./hooks";
 import { ElectricPiano } from "smplr";
@@ -160,6 +161,7 @@ function App() {
         selectedExtension={selectedExtension}
         handleSelectExtension={handleSelectExtension}
       />
+      <Footer />
     </>
   );
 }
